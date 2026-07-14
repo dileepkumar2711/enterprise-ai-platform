@@ -22,3 +22,16 @@ AI responses may include mistakes.
 [8] https://agilefever.com/chatgpt-vs-grok-vs-gemini-vs-claude-vs-perplexity/
 [9] https://www.clickforest.com/en/blog/gemini-3-pro-vs-chatgpt-vs-claude-vs-perplexity
 
+# Sprint Progress
+
+## Sprint 1
+
+- PDF Loader
+- Text Chunking
+
+## Sprint 2
+
+- Embeddings
+- ChromaDB
+- Semantic Search
+- Unit Tests
