@@ -1,6 +1,7 @@
 """Local LLM service using Ollama."""
 
 import json
+import os
 import urllib.error
 import urllib.request
 
@@ -11,10 +12,13 @@ class OllamaService:
     def __init__(
         self,
         model: str = "llama3.2:3b",
-        base_url: str = "http://localhost:11434",
+        base_url: str | None = None,
     ) -> None:
         self.model = model
-        self.base_url = base_url.rstrip("/")
+        self.base_url = (
+            base_url
+            or os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+        ).rstrip("/")
 
     def generate(self, prompt: str) -> str:
         """Generate one response from the configured Ollama model."""
