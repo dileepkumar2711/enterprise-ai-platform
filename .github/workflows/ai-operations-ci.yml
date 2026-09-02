@@ -36,3 +36,26 @@ jobs:
       - name: Run tests
         run: |
           python -m pytest -q
+
+  docker-build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: test
+
+    defaults:
+      run:
+        working-directory: applications/ai-operations-assistant
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ai-operations-assistant:ci \
+            .
+
+      - name: Verify Docker image
+        run: |
+          docker image inspect ai-operations-assistant:ci
