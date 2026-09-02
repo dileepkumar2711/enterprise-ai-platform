@@ -309,8 +309,6 @@ Documents
 
 ---
 
-## Planned Platform Extensions
-
 The broader Enterprise AI Platform roadmap includes:
 
 - MLflow / LLMOps
@@ -326,3 +324,71 @@ The broader Enterprise AI Platform roadmap includes:
 - MCP integration
 
 These capabilities will be added incrementally as separate implementation milestones.
+
+---
+## MLflow / LLMOps
+## Project 2 - MLOps / LLMOps
+
+### Milestone 1 - MLflow RAG Run Tracking
+
+MLflow has been integrated with the AI Operations Assistant to provide experiment and execution tracking for the RAG pipeline.
+
+Each RAG request is recorded as an MLflow run under the experiment:
+
+`AI-Operations-Assistant-LLMOps`
+
+The current implementation tracks:
+
+- **Parameters**
+  - LLM model
+  - Retrieval `k`
+
+- **Metrics**
+  - End-to-end RAG latency in seconds
+  - Number of retrieved documents
+
+- **Development metadata**
+  - User question
+  - Generated answer
+
+> Question and answer values are logged as tags for local development and learning only. Production environments should apply appropriate privacy, security, redaction, and governance controls before logging request or response content.
+
+### MLflow Tracking Flow
+
+```text
+User Question
+     |
+     v
+FastAPI /ask
+     |
+     v
+RAG Pipeline
+     |
+     +----> MLflow Run
+     |        |
+     |        +--> Parameters
+     |        |     - model
+     |        |     - retrieval_k
+     |        |
+     |        +--> Metrics
+     |        |     - latency_seconds
+     |        |     - retrieved_document_count
+     |        |
+     |        +--> Development Metadata
+     |              - question
+     |              - answer
+     |
+     v
+Embedding
+     |
+     v
+ChromaDB Retrieval
+     |
+     v
+Prompt Builder
+     |
+     v
+Ollama / Llama 3.2
+     |
+     v
+Grounded Answer

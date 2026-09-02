@@ -233,3 +233,5 @@ chroma_db/
 # IDE
 .vscode/
 .idea/
+# MLflow local tracking database
+mlflow.db
