@@ -1,8 +1,11 @@
 """End-to-end RAG pipeline."""
 
 import time
-
+import os
 import mlflow
+mlflow.set_tracking_uri(
+    os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000")
+) 
 
 from src.embeddings.embedding_service import EmbeddingService
 from src.vectorstore.chroma_store import ChromaStore
@@ -19,7 +22,8 @@ class RAGPipeline:
         self.llm_service = OllamaService()
         self.evaluator = RAGEvaluator()
 
-        mlflow.set_tracking_uri("http://127.0.0.1:5000")
+       ## mlflow.set_tracking_uri("http://127.0.0.1:5000")
+        ##import os
         mlflow.set_experiment("AI-Operations-Assistant-LLMOps")
 
     def answer(self, question: str) -> str:
