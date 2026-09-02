@@ -8,7 +8,7 @@ from src.embeddings.embedding_service import EmbeddingService
 from src.vectorstore.chroma_store import ChromaStore
 from src.rag.prompt_builder import build_rag_prompt
 from src.llm.ollama_service import OllamaService
-
+from src.evaluation.rag_evaluator import RAGEvaluator
 
 class RAGPipeline:
     """Retrieve relevant context and generate a grounded answer."""
@@ -17,6 +17,7 @@ class RAGPipeline:
         self.embedding_service = EmbeddingService()
         self.vector_store = ChromaStore()
         self.llm_service = OllamaService()
+        self.evaluator = RAGEvaluator()
 
         mlflow.set_tracking_uri("http://127.0.0.1:5000")
         mlflow.set_experiment("AI-Operations-Assistant-LLMOps")
@@ -79,18 +80,38 @@ class RAGPipeline:
             )
 
             # 4. Send the grounded prompt to the local LLM.
+                        # 4. Send the grounded prompt to the local LLM.
             answer = self.llm_service.generate(prompt)
 
             latency_seconds = time.perf_counter() - start_time
+
+            # Evaluate RAG response quality.
+            context_relevance = self.evaluator.context_relevance_score(
+                question=question,
+                documents=documents,
+            )
+
+            answer_length = self.evaluator.answer_length(answer)
 
             # Track RAG metrics.
             mlflow.log_metric(
                 "latency_seconds",
                 latency_seconds,
             )
+
             mlflow.log_metric(
                 "retrieved_document_count",
                 len(documents),
+            )
+
+            mlflow.log_metric(
+                "context_relevance_score",
+                context_relevance,
+            )
+
+            mlflow.log_metric(
+                "answer_length_words",
+                answer_length,
             )
 
             # Track request/response metadata.
