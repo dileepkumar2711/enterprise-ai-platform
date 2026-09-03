@@ -67,12 +67,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker image
-        run: |
-          docker build \
-            -t ai-operations-assistant:ci \
-            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
-            
-
+        run: docker build -t ai-operations-assistant:ci -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
       - name: Verify Docker image
         run: |
           docker image inspect ai-operations-assistant:ci
