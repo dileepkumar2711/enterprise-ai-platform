@@ -12,7 +12,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      MLFLOW_TRACKING_URI: sqlite:///mlflow-ci.db
+      #MLFLOW_TRACKING_URI: sqlite:///mlflow-ci.db
+      MLFLOW_TRACKING_URI: file:./mlruns
 
     defaults:
       run:
