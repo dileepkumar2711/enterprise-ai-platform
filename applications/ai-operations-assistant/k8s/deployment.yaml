@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: ai-operations-assistant
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: ai-operations-assistant
+
+  template:
+    metadata:
+      labels:
+        app: ai-operations-assistant
+
+    spec:
+      containers:
+        - name: ai-operations-assistant
+          image: ghcr.io/dileepkumar2711/ai-operations-assistant:latest
+
+          env:
+            - name: MLFLOW_TRACKING_URI
+              value: "file:///app/mlruns"
+
+            - name: MLFLOW_ALLOW_FILE_STORE
+              value: "true"
+
+          ports:
+            - containerPort: 8000
