@@ -1,6 +1,5 @@
 apiVersion: apps/v1
 kind: Deployment
-
 metadata:
   name: ai-operations-assistant
 
@@ -28,5 +27,17 @@ spec:
             - name: MLFLOW_ALLOW_FILE_STORE
               value: "true"
 
+            - name: OLLAMA_BASE_URL
+              value: "http://host.docker.internal:11434"
+
           ports:
             - containerPort: 8000
+
+          volumeMounts:
+            - name: chroma-storage
+              mountPath: /app/chroma_db
+
+      volumes:
+        - name: chroma-storage
+          persistentVolumeClaim:
+            claimName: ai-operations-chroma-pvc
