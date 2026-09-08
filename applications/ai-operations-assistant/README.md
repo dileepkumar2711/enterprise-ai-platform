@@ -392,3 +392,169 @@ Ollama / Llama 3.2
      |
      v
 Grounded Answer
+```
+
+---
+
+### Milestone 2 - RAG Evaluation
+The RAG pipeline includes lightweight evaluation metrics that are logged to MLflow for each execution.
+
+Tracked evaluation metrics include:
+
+- `context_relevance_score`
+- `answer_length_words`
+- `latency_seconds`
+- `retrieved_document_count`
+
+This provides a foundation for comparing RAG behavior across changes to retrieval, prompts, models, and application configuration.
+
+---
+
+### Milestone 3 - CI and Container Security
+
+GitHub Actions provides automated validation of the application.
+
+The implemented pipeline performs:
+
+1. Source checkout
+2. Python environment setup
+3. Dependency installation
+4. Automated Pytest execution
+5. Docker image build
+6. Docker image verification
+7. Trivy HIGH/CRITICAL vulnerability scanning
+8. Push of the validated image to GitHub Container Registry (GHCR)
+
+Container image:
+
+```text
+ghcr.io/dileepkumar2711/ai-operations-assistant:latest
+```
+
+---
+
+### Milestone 4 - Kubernetes Deployment
+
+The AI Operations Assistant is deployed to a local Kubernetes cluster using Kubernetes Deployment, Service, and PersistentVolumeClaim resources.
+
+Implemented Kubernetes components:
+
+- Application Deployment
+- Kubernetes Service
+- PersistentVolumeClaim for ChromaDB
+- Persistent ChromaDB data across pod restarts
+- Environment-based Ollama connectivity
+- Container image pulled from GHCR
+
+The application container connects to Ollama running on the Docker Desktop host using:
+
+```text
+http://host.docker.internal:11434
+```
+
+The ChromaDB database is mounted inside the application container at:
+
+```text
+/app/chroma_db
+```
+
+A 1 GiB PersistentVolumeClaim provides persistent vector storage.
+
+### Kubernetes RAG Flow
+
+```text
+User
+  |
+  v
+Kubernetes Service
+  |
+  v
+AI Operations Assistant Pod
+  |
+  +--> FastAPI
+  |
+  +--> RAG Pipeline
+  |      |
+  |      +--> Sentence Transformer
+  |      |
+  |      +--> ChromaDB
+  |             |
+  |             v
+  |      PersistentVolumeClaim
+  |
+  +--> Ollama / Llama 3.2
+         |
+         v
+Docker Desktop Host
+```
+
+Persistence was verified by restarting the Kubernetes Deployment and confirming that the ChromaDB collection retained its stored documents.
+
+End-to-end Kubernetes RAG validation was also completed successfully:
+
+```text
+Question:
+Where should I securely store application passwords?
+
+Answer:
+Azure Key Vault.
+```
+
+---
+
+## Current Project 2 Status
+
+Implemented and validated:
+
+- MLflow RAG execution tracking
+- RAG evaluation metrics
+- GitHub Actions CI
+- Automated Pytest validation
+- Docker image build
+- Trivy container vulnerability scanning
+- GHCR image publishing
+- Kubernetes Deployment and Service
+- ChromaDB PersistentVolumeClaim
+- Persistent vector data across pod restarts
+- Kubernetes-to-host Ollama connectivity
+- End-to-end RAG request through Kubernetes
+
+### Current Delivery Architecture
+
+```text
+Developer
+   |
+   v
+Git Push
+   |
+   v
+GitHub
+   |
+   v
+GitHub Actions
+   |
+   +--> Pytest
+   |
+   +--> Docker Build
+   |
+   +--> Trivy Security Scan
+   |
+   v
+GitHub Container Registry
+   |
+   v
+Kubernetes Deployment
+   |
+   +--> FastAPI
+   +--> RAG Pipeline
+   +--> ChromaDB PVC
+   |
+   +--> Ollama / Llama 3.2
+   |
+   +--> MLflow Tracking / Evaluation
+   |
+   v
+Grounded AI Response
+```
+
+> Kubernetes deployment is currently applied manually. The CI pipeline automatically tests, builds, scans, and publishes the container image to GHCR. Automated deployment to Kubernetes is a future CD enhancement.
