@@ -235,3 +235,7 @@ chroma_db/
 .idea/
 # MLflow local tracking database
 mlflow.db
+
+# Local ingestion and MLflow runtime data
+applications/ai-operations-assistant/data/ingestion_state.json
+applications/ai-operations-assistant/mlruns/

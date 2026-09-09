@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pypdf import PdfReader
 
-from text_chunker import chunk_pages
+from src.text_chunker import chunk_pages
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent

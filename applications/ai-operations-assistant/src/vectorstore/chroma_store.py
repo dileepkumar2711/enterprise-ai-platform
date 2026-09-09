@@ -83,7 +83,20 @@ class ChromaStore:
             n_results=number_of_results,
             include=["documents", "metadatas", "distances"],
         )
-
     def count(self) -> int:
         """Return the number of records in the collection."""
         return self.collection.count()
+
+    def delete_by_source(self, source: str) -> None:
+        """Delete all chunks belonging to one source document."""
+        if not isinstance(source, str):
+            raise TypeError("source must be a string")
+
+        cleaned_source = source.strip()
+
+        if not cleaned_source:
+            raise ValueError("source cannot be empty")
+
+        self.collection.delete(
+            where={"source": cleaned_source}
+        )
