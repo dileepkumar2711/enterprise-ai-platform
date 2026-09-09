@@ -11,6 +11,7 @@ from src.embeddings.embedding_service import EmbeddingService
 from src.vectorstore.chroma_store import ChromaStore
 from src.rag.prompt_builder import build_rag_prompt
 from src.llm.ollama_service import OllamaService
+from src.llm.vllm_service import VLLMService
 from src.evaluation.rag_evaluator import RAGEvaluator
 
 class RAGPipeline:
@@ -19,7 +20,23 @@ class RAGPipeline:
     def __init__(self) -> None:
         self.embedding_service = EmbeddingService()
         self.vector_store = ChromaStore()
-        self.llm_service = OllamaService()
+        ##self.llm_service = OllamaService()
+        self.llm_provider = os.getenv(
+         "LLM_PROVIDER",
+         "ollama",
+        ).strip().lower()
+
+        if self.llm_provider == "ollama":
+           self.llm_service = OllamaService()
+
+        elif self.llm_provider == "vllm":
+           self.llm_service = VLLMService()
+
+        else:
+            raise ValueError(
+            f"Unsupported LLM_PROVIDER: {self.llm_provider}"  
+            )
+
         self.evaluator = RAGEvaluator()
 
        ## mlflow.set_tracking_uri("http://127.0.0.1:5000")
@@ -44,7 +61,7 @@ class RAGPipeline:
             # Track configuration used for this RAG execution.
             mlflow.log_param("model", self.llm_service.model)
             mlflow.log_param("retrieval_k", 3)
-
+            mlflow.log_param("llm_provider", self.llm_provider)
             # 1. Convert the user's question into an embedding.
             query_embedding = self.embedding_service.embed_query(question)
 
